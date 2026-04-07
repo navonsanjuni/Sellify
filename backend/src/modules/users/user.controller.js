@@ -14,7 +14,7 @@ const getUserById = asyncHandler(async (req, res) => {
 
 const updateUser = asyncHandler(async (req, res) => {
   // Staff can only update themselves; admin can update anyone
-  if (req.user.role !== "admin" && req.params.id !== req.user.id) {
+  if (req.user.role !== "admin" && req.params.id !== req.user._id.toString()) {
     return sendResponse(res, 403, null, "Access denied");
   }
   // Staff cannot change their own role

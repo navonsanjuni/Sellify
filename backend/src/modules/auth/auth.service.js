@@ -27,7 +27,7 @@ const login = async (email, password) => {
     throw ApiError.forbidden("Account deactivated. Contact admin.");
   }
 
-  const tokens = generateTokenPair({ id: user._id, role: user.role });
+  const tokens = generateTokenPair({ id: user._id, role: user.role, type: "admin" });
 
   // Store refresh token in DB
   user.refreshToken = tokens.refreshToken;
@@ -54,7 +54,7 @@ const refreshTokens = async (incomingRefreshToken) => {
     throw ApiError.unauthorized("Invalid or expired refresh token");
   }
 
-  const tokens = generateTokenPair({ id: user._id, role: user.role });
+  const tokens = generateTokenPair({ id: user._id, role: user.role, type: "admin" });
   user.refreshToken = tokens.refreshToken;
   await user.save({ validateBeforeSave: false });
 
