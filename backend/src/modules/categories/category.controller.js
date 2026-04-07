@@ -29,4 +29,11 @@ const deleteCategory = asyncHandler(async (req, res) => {
   sendResponse(res, 200, null, "Category deactivated successfully");
 });
 
-module.exports = { getAllCategories, getCategoryById, createCategory, updateCategory, deleteCategory };
+// ─── Public Storefront ───────────────────────────────────────────────────────
+
+const getPublicCategories = asyncHandler(async (req, res) => {
+  const categories = await categoryService.getPublicCategories();
+  sendResponse(res, 200, { categories }, "Categories retrieved");
+});
+
+module.exports = { getAllCategories, getCategoryById, createCategory, updateCategory, deleteCategory, getPublicCategories };

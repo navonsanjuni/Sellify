@@ -6,8 +6,11 @@ const validate = require("../../middlewares/validate.middleware");
 const upload = require("../../middlewares/upload.middleware");
 const { createCategorySchema, updateCategorySchema } = require("./category.validation");
 
-router.use(protect);
+// ─── Public Storefront Route (no auth) ───────────────────────────────────────
+router.get("/public", categoryController.getPublicCategories);
 
+// ─── Admin/Staff Routes (protected) ─────────────────────────────────────────
+router.use(protect);
 router.get("/", categoryController.getAllCategories);
 router.get("/:id", categoryController.getCategoryById);
 router.post("/", authorize("admin"), upload.single("image"), validate(createCategorySchema), categoryController.createCategory);

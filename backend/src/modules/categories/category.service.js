@@ -39,4 +39,14 @@ const deleteCategory = async (id) => {
   return category;
 };
 
-module.exports = { getAllCategories, getCategoryById, createCategory, updateCategory, deleteCategory };
+// ─── Public Storefront ───────────────────────────────────────────────────────
+
+const getPublicCategories = async () => {
+  const categories = await Category.find({ isActive: true })
+    .select("name description image")
+    .sort({ name: 1 });
+
+  return categories;
+};
+
+module.exports = { getAllCategories, getCategoryById, createCategory, updateCategory, deleteCategory, getPublicCategories };

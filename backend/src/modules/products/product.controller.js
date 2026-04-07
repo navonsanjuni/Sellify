@@ -2,6 +2,8 @@ const productService = require("./product.service");
 const asyncHandler = require("../../utils/asyncHandler");
 const { sendResponse } = require("../../utils/ApiResponse");
 
+// ─── Admin/Staff ─────────────────────────────────────────────────────────────
+
 const getAllProducts = asyncHandler(async (req, res) => {
   const result = await productService.getAllProducts(req.query);
   sendResponse(res, 200, result, "Products retrieved successfully");
@@ -39,4 +41,24 @@ const adjustStock = asyncHandler(async (req, res) => {
   sendResponse(res, 200, { product }, "Stock adjusted successfully");
 });
 
-module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, adjustStock };
+// ─── Public Storefront ───────────────────────────────────────────────────────
+
+const getPublicProducts = asyncHandler(async (req, res) => {
+  const result = await productService.getPublicProducts(req.query);
+  sendResponse(res, 200, result, "Products retrieved");
+});
+
+const getFeaturedProducts = asyncHandler(async (req, res) => {
+  const products = await productService.getFeaturedProducts(req.query.limit);
+  sendResponse(res, 200, { products }, "Featured products retrieved");
+});
+
+const getPublicProductById = asyncHandler(async (req, res) => {
+  const product = await productService.getPublicProductById(req.params.id);
+  sendResponse(res, 200, { product }, "Product retrieved");
+});
+
+module.exports = {
+  getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, adjustStock,
+  getPublicProducts, getFeaturedProducts, getPublicProductById,
+};

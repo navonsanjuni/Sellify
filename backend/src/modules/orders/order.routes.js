@@ -1,13 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const orderController = require("./order.controller");
-const { protect } = require("../../middlewares/auth.middleware");
+const { protect, protectCustomer, authorize } = require("../../middlewares/auth.middleware");
 const validate = require("../../middlewares/validate.middleware");
 const { createOrderSchema, updatePaymentSchema, updateOrderStatusSchema } = require("./order.validation");
-const { authorize } = require("../../middlewares/auth.middleware");
 
+// ─── Customer Order Routes ───────────────────────────────────────────────────
+router.get("/my", protectCustomer, orderController.getMyOrders);
+router.get("/my/:id", protectCustomer, orderController.getMyOrderById);
+
+// ─── Admin/Staff Order Routes ────────────────────────────────────────────────
 router.use(protect);
-
 router.get("/", orderController.getAllOrders);
 router.post("/", validate(createOrderSchema), orderController.createOrder);
 router.get("/:id", orderController.getOrderById);
