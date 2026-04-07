@@ -5,6 +5,8 @@ const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
 
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger");
 const routes = require("./routes");
 const errorMiddleware = require("./middlewares/error.middleware");
 const logger = require("./utils/logger");
@@ -53,6 +55,9 @@ if (process.env.NODE_ENV !== "test") {
 
 // ─── Static Files (uploaded images) ──────────────────────────────────────────
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
+
+// ─── Swagger Docs ───────────────────────────────────────────────────────────
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ─── API Routes ──────────────────────────────────────────────────────────────
 app.use("/api", routes);
