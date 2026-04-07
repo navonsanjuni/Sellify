@@ -29,7 +29,7 @@ const login = async (email, password) => {
 
   const tokens = generateTokenPair({ id: user._id, role: user.role });
 
-  // Store hashed refresh token in DB
+  // Store refresh token in DB
   user.refreshToken = tokens.refreshToken;
   user.lastLogin = new Date();
   await user.save({ validateBeforeSave: false });

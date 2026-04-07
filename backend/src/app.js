@@ -18,7 +18,8 @@ app.use(
   cors({
     origin: process.env.NODE_ENV === "production"
       ? process.env.ALLOWED_ORIGINS?.split(",") || []
-      : "*",
+      : ["http://localhost:5173", "http://localhost:3000"],
+    credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -33,6 +34,9 @@ const limiter = rateLimit({
   message: { success: false, message: "Too many requests. Try again in 15 minutes." },
 });
 app.use("/api", limiter);
+
+// ─── Stripe Webhook (raw body needed before JSON parser) ─────────────────────
+app.use("/api/checkout/webhook", express.raw({ type: "application/json" }));
 
 // ─── Parsing Middlewares ──────────────────────────────────────────────────────
 app.use(express.json({ limit: "10mb" }));

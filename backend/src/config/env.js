@@ -25,5 +25,8 @@ module.exports = {
   JWT_REFRESH_EXPIRES: process.env.JWT_REFRESH_EXPIRES || "7d",
   UPLOAD_PATH: process.env.UPLOAD_PATH || "uploads/",
   MAX_FILE_SIZE: parseInt(process.env.MAX_FILE_SIZE) || 5 * 1024 * 1024, // 5MB
+  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+  CLIENT_URL: process.env.CLIENT_URL || "http://localhost:5173",
   validateEnv,
 };

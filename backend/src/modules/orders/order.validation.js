@@ -25,4 +25,10 @@ const updatePaymentSchema = Joi.object({
   amountPaid: Joi.number().min(0),
 });
 
-module.exports = { createOrderSchema, updatePaymentSchema };
+const updateOrderStatusSchema = Joi.object({
+  orderStatus: Joi.string()
+    .valid("pending", "confirmed", "processing", "shipped", "delivered", "cancelled")
+    .required(),
+});
+
+module.exports = { createOrderSchema, updatePaymentSchema, updateOrderStatusSchema };

@@ -22,4 +22,9 @@ const updatePaymentStatus = asyncHandler(async (req, res) => {
   sendResponse(res, 200, { order }, "Payment status updated successfully");
 });
 
-module.exports = { createOrder, getAllOrders, getOrderById, updatePaymentStatus };
+const updateOrderStatus = asyncHandler(async (req, res) => {
+  const order = await orderService.updateOrderStatus(req.params.id, req.body);
+  sendResponse(res, 200, { order }, "Order status updated successfully");
+});
+
+module.exports = { createOrder, getAllOrders, getOrderById, updatePaymentStatus, updateOrderStatus };

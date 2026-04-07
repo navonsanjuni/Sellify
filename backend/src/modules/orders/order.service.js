@@ -164,4 +164,32 @@ const updatePaymentStatus = async (id, { paymentStatus, paymentMethod, amountPai
   return order;
 };
 
-module.exports = { createOrder, getAllOrders, getOrderById, updatePaymentStatus };
+/**
+ * Update order status (admin/staff — e.g. confirmed → processing → shipped → delivered)
+ */
+const updateOrderStatus = async (id, { orderStatus }) => {
+  const order = await Order.findById(id);
+  if (!order) throw ApiError.notFound("Order not found");
+
+  const validTransitions = {
+    pending: ["confirmed", "cancelled"],
+    confirmed: ["processing", "cancelled"],
+    processing: ["shipped", "cancelled"],
+    shipped: ["delivered"],
+    delivered: [],
+    cancelled: [],
+  };
+
+  const allowed = validTransitions[order.orderStatus];
+  if (!allowed || !allowed.includes(orderStatus)) {
+    throw ApiError.badRequest(
+      `Cannot change status from "${order.orderStatus}" to "${orderStatus}"`
+    );
+  }
+
+  order.orderStatus = orderStatus;
+  await order.save();
+  return order;
+};
+
+module.exports = { createOrder, getAllOrders, getOrderById, updatePaymentStatus, updateOrderStatus };

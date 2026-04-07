@@ -87,6 +87,26 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    orderStatus: {
+      type: String,
+      enum: ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"],
+      default: "pending",
+    },
+    orderType: {
+      type: String,
+      enum: ["pos", "online"],
+      default: "pos",
+    },
+    shippingAddress: {
+      street: { type: String, trim: true },
+      city: { type: String, trim: true },
+      state: { type: String, trim: true },
+      zipCode: { type: String, trim: true },
+    },
+    stripeSessionId: {
+      type: String,
+      default: null,
+    },
     notes: {
       type: String,
       trim: true,
@@ -95,7 +115,7 @@ const orderSchema = new mongoose.Schema(
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      default: null, // null for online orders placed by customers
     },
   },
   {
@@ -103,14 +123,28 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-// Auto-generate order number before saving
+// Counter model for atomic order number generation
+const counterSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  seq: { type: Number, default: 0 },
+});
+const Counter = mongoose.model("Counter", counterSchema);
+
+// Auto-generate order number before saving (atomic to prevent race conditions)
 orderSchema.pre("save", async function (next) {
   if (!this.isNew) return next();
 
-  const count = await this.constructor.countDocuments();
   const date = new Date();
   const datePart = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, "0")}${String(date.getDate()).padStart(2, "0")}`;
-  this.orderNumber = `ORD-${datePart}-${String(count + 1).padStart(4, "0")}`;
+  const counterId = `order-${datePart}`;
+
+  const counter = await Counter.findByIdAndUpdate(
+    counterId,
+    { $inc: { seq: 1 } },
+    { new: true, upsert: true }
+  );
+
+  this.orderNumber = `ORD-${datePart}-${String(counter.seq).padStart(4, "0")}`;
   next();
 });
 
