@@ -14,7 +14,11 @@ const logger = require("./utils/logger");
 const app = express();
 
 // ─── Security Middlewares ─────────────────────────────────────────────────────
-app.use(helmet());
+// Allow cross-origin embedding of static assets (e.g. /uploads images served
+// to the Vite dev server on a different port). Without this, helmet's default
+// `Cross-Origin-Resource-Policy: same-origin` makes browsers silently drop the
+// image responses even though CORS allows the request.
+app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
 app.use(
   cors({
