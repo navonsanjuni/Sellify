@@ -1,7 +1,10 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 const ApiError = require("../utils/ApiError");
 const env = require("../config/env");
+
+fs.mkdirSync(env.UPLOAD_PATH, { recursive: true });
 
 // Disk storage config
 const storage = multer.diskStorage({
